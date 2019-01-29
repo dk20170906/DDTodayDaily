@@ -1,0 +1,160 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn {
+            width: 1024px;
+            margin: 20px auto;
+            text-align: right;
+        }
+
+        .refresh {
+            background: #84d4dd;
+            border: 1px solid #58b9c3;
+            color: #666;
+            padding: 8px 25px;
+            cursor: pointer;
+            outline: none;
+        }
+
+            .refresh:hover {
+                background: #58b9c3;
+            }
+
+        .table {
+            width: 1024px;
+            border-collapse: collapse;
+            margin: 0 auto;
+            text-align: center;
+            color: #333;
+        }
+
+            .table caption {
+                font-size: 16px;
+                font-weight: bold;
+                border: 1px solid #cad9ea;
+                height: 42px;
+                line-height: 42px;
+                background: #ebf9fb;
+                padding-left: 24px;
+            }
+
+        table td, table th {
+            font-size: 14px;
+            border: 1px solid #cad9ea;
+            color: #666;
+            height: 30px;
+        }
+
+        table thead th {
+            background-color: #CCE8EB;
+            width: 100px;
+        }
+
+        table tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        table tr:nth-child(even) {
+            background: #F5FAFA;
+        }
+    </style>
+    <script src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")"></script>
+
+
+
+<body>
+
+
+    <div class="btn">
+        <label class="refresh" id="labelmsg">正在加载，请稍候！！！</label>
+        <button class="refresh" onclick="refreshbut();">刷新</button>
+    </div>
+    <table class="table" id="tabledaily">
+        <caption>日志提交情况表</caption>
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    用户名
+                </th>
+                <th>
+                    提交月份
+                </th>
+                <th>
+                    应提交次数
+                </th>
+                <th>
+                    实际提交次数
+                </th>
+                <th>
+                    未提交次数
+                </th>
+            </tr>
+        </thead>
+    </table>
+</body>
+<script type="text/javascript">
+    $(function () {
+        $.ajax({
+            type: "get",
+            url: "@Url.Content("~/daily/GetDailyCounts")",
+            success: function (data) {
+                debugger;
+                if (data.code == 0) {
+                    clearInterval(timestart);
+                    $('#labelmsg').html("加载完成！！！");
+                    //遍历数据
+                    for (var i = 0; i < data.data.length; i++) {
+                        var daily = data.data[i];
+  
+                        debugger;
+                        //遍历每一行的数据
+                        var protd = $("<tr><td>" + (i + 1) + "</td><td>" + daily.EmpName + "</td><td>" + daily.BeforMonth + "</td><td>" + daily.ShouldSubNum + "</td><td>" + daily.SubmitedNum + "</td><td>" + daily.NotSubmitted + "</td></tr>");
+                        // 并添加到表格中,添加数据到表格中
+                        $("#tabledaily").append(protd);
+                    }          
+                } else {
+                    $('#labelmsg').html("请求失败，请重视！！！");       
+                }
+            },
+            error: function (data) {
+
+                $('#labelmsg').html("请求失败，请重视！！！");       
+            }
+        });
+    });
+
+    var m = 0;
+   var timestart= setInterval(function () {
+        m++;
+        $('#labelmsg').html("正在加载，请稍候！！！" + m + " s")
+    }, 1000);
+
+   
+  
+
+    function refreshbut() {
+        window.location.reload();
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
